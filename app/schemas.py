@@ -1,17 +1,31 @@
+"""Pydantic request and response schemas."""
+
 from pydantic import BaseModel, Field
 
-class ReviewRequest(BaseModel):
-    filename: str = Field(default="snippet.py")
-    code: str
 
-class Finding(BaseModel):
+class ReviewRequest(BaseModel):
+    """Code review request."""
+
+    code: str = Field(
+        ...,
+        min_length=1,
+        description="Python source code to review.",
+        examples=["def add(a, b):\n    return a + b"],
+    )
+
+
+class FindingResponse(BaseModel):
+    """One static-analysis finding."""
+
     rule: str
-    severity: str
-    line: int
     message: str
-    suggestion: str
+    line: int
+    severity: str
+    deduction: int
+
 
 class ReviewResponse(BaseModel):
-    filename: str
+    """Code review response."""
+
     score: int
-    findings: list[Finding]
+    findings: list[FindingResponse]
